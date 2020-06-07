@@ -77,14 +77,14 @@ class ErrorReturnCode(Exception):
         self.stdout = stdout
         self.stderr = stderr
 
-        if self.stdout is None: tstdout = "<redirected>"
+        if self.stdout is None: tstdout = "<redirected>".encode()
         else:
             tstdout = self.stdout[:self.truncate_cap]
             out_delta = len(self.stdout) - len(tstdout)
             if out_delta:
                 tstdout += ("... (%d more, please see e.stdout)" % out_delta).encode()
 
-        if self.stderr is None: tstderr = "<redirected>"
+        if self.stderr is None: tstderr = "<redirected>".encode()
         else:
             tstderr = self.stderr[:self.truncate_cap]
             err_delta = len(self.stderr) - len(tstderr)
