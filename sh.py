@@ -453,6 +453,7 @@ If you're using glob.glob(), please use pbs.glob() instead." % self.path, stackl
         if call_args["err_to_out"]: stderr = subp.STDOUT
 
         # leave shell=False
+        print('+ ' + os.path.basename(cmd[0]) + ' ' + ' '.join(cmd[1:]))
         process = subp.Popen(cmd, shell=False, env=call_args["env"],
             cwd=call_args["cwd"], stdin=stdin, stdout=stdout, stderr=stderr)
 
