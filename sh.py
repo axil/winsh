@@ -161,6 +161,13 @@ class RunningCommand(object):
         # evaluate
         if self.call_args["bg"]: return
 
+        if self.call_args["ifg"]:
+            while True:
+                line = self.process.stdout.readline()
+                if not line:
+                    break
+                print(line.decode().rstrip())
+
         # we're running this command as a with context, don't do anything
         # because nothing was started to run from Command.__call__
         if self.call_args["with"]: return
@@ -248,6 +255,7 @@ class Command(object):
 
     call_args = {
         "fg": False, # run command in foreground
+        "ifg": False, # run command in foreground in ipython or jupyter
         "bg": False, # run command in background
         "with": False, # prepend the command to every command after it
         "out": None, # redirect STDOUT
