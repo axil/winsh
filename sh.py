@@ -161,19 +161,22 @@ class RunningCommand(object):
         # evaluate
         if self.call_args["bg"]: return
 
+        # we're running this command as a with context, don't do anything
+        # because nothing was started to run from Command.__call__
+        if self.call_args["with"]: return
+
+        if stdin: stdin = stdin.encode("utf8")
+        
         if self.call_args["ifg"]:
+            self.process.stdin.write(stdin + b'\n')
+            self.process.stdin.flush()
             while True:
                 line = self.process.stdout.readline()
                 if not line:
                     break
                 print(line.decode().rstrip())
 
-        # we're running this command as a with context, don't do anything
-        # because nothing was started to run from Command.__call__
-        if self.call_args["with"]: return
-
         # run and block
-        if stdin: stdin = stdin.encode("utf8")
         self._stdout, self._stderr = self.process.communicate(stdin)
         self._handle_exit_code(self.process.wait())
 
@@ -256,6 +259,7 @@ class Command(object):
     call_args = {
         "fg": False, # run command in foreground
         "ifg": False, # run command in foreground in ipython or jupyter
+        "ret": False, # run command in foreground in ipython or jupyter
         "bg": False, # run command in background
         "with": False, # prepend the command to every command after it
         "out": None, # redirect STDOUT
@@ -465,7 +469,7 @@ If you're using glob.glob(), please use pbs.glob() instead." % self.path, stackl
         process = subp.Popen(cmd, shell=False, env=call_args["env"],
             cwd=call_args["cwd"], stdin=stdin, stdout=stdout, stderr=stderr)
 
-        return RunningCommand(command_ran, process, call_args, actual_stdin)
+        RunningCommand(command_ran, process, call_args, actual_stdin)
 
 
 
