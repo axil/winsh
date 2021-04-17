@@ -259,7 +259,8 @@ class Command(object):
     call_args = {
         "fg": False, # run command in foreground
         "ifg": False, # run command in foreground in ipython or jupyter
-        "ret": False, # run command in foreground in ipython or jupyter
+        "ret": False, # return the stdout
+        "echo": False, # echo commands to be run
         "bg": False, # run command in background
         "with": False, # prepend the command to every command after it
         "out": None, # redirect STDOUT
@@ -465,12 +466,15 @@ If you're using glob.glob(), please use pbs.glob() instead." % self.path, stackl
         if call_args["err_to_out"]: stderr = subp.STDOUT
 
         # leave shell=False
-        print('+ ' + os.path.basename(cmd[0]) + ' ' + ' '.join(cmd[1:]))
+        if call_args["echo"]:        
+            print('+ ' + os.path.basename(cmd[0]) + ' ' + ' '.join(cmd[1:]))
         process = subp.Popen(cmd, shell=False, env=call_args["env"],
             cwd=call_args["cwd"], stdin=stdin, stdout=stdout, stderr=stderr)
 
-        RunningCommand(command_ran, process, call_args, actual_stdin)
+        p = RunningCommand(command_ran, process, call_args, actual_stdin)
 
+        if call_args["ret"]:
+            return p.stdout.rstrip()
 
 
 
