@@ -165,7 +165,9 @@ class RunningCommand(object):
         # because nothing was started to run from Command.__call__
         if self.call_args["with"]: return
 
-        if stdin: stdin = stdin.encode("utf8")
+        if stdin: 
+            if not isinstance(stdin, bytes):
+                stdin = str(stdin).encode("utf8")
         
         if self.call_args["ifg"]:
             self.process.stdin.write(stdin + b'\n')
@@ -468,6 +470,7 @@ If you're using glob.glob(), please use pbs.glob() instead." % self.path, stackl
         # leave shell=False
         if call_args["echo"]:        
             print('+ ' + os.path.basename(cmd[0]) + ' ' + ' '.join(cmd[1:]))
+
         process = subp.Popen(cmd, shell=False, env=call_args["env"],
             cwd=call_args["cwd"], stdin=stdin, stdout=stdout, stderr=stderr)
 
