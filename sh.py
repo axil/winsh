@@ -470,7 +470,7 @@ If you're using glob.glob(), please use pbs.glob() instead." % self.path, stackl
         # leave shell=False
         if call_args["echo"]:        
             print('+ ' + os.path.basename(cmd[0]) + ' ' + ' '.join(cmd[1:]))
-
+        
         process = subp.Popen(cmd, shell=False, env=call_args["env"],
             cwd=call_args["cwd"], stdin=stdin, stdout=stdout, stderr=stderr)
 
